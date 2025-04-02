@@ -3,9 +3,16 @@ let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 let startButton = document.getElementById('startButton');
 let stopButton = document.getElementById('stopButton');
+let captureButton = document.getElementById('captureButton');
 let status = document.getElementById('status');
-let model = null;
+let cameraOverlay = document.getElementById('cameraOverlay');
+let cocoModel = null;
+let roboflowModel = null;
+let currentModel = null;
 let isDetecting = false;
+
+// Confidence threshold (0.0 to 1.0)
+const CONFIDENCE_THRESHOLD = 0.4;
 
 // Material classification mapping
 const materialClassification = {
@@ -38,9 +45,12 @@ const materialColors = {
     'METAL': '#FFC107',
     'CARDBOARD': '#795548',
     'GLASS': '#9C27B0',
-    'PLASTIC': '#F44336',
-    'UNKNOWN': '#9E9E9E'
+    'PLASTIC': '#F44336'
 };
+
+// Model selection elements
+const cocoModelButton = document.getElementById('cocoModel');
+const roboflowModelButton = document.getElementById('roboflowModel');
 
 // Check browser compatibility
 function checkBrowserCompatibility() {
@@ -104,7 +114,13 @@ function classifyMaterial(detectedClass) {
 function drawDetections(detections) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    detections.forEach(detection => {
+    // Filter detections based on confidence threshold and known classifications
+    const filteredDetections = detections.filter(detection => {
+        const material = classifyMaterial(detection.class);
+        return detection.score >= CONFIDENCE_THRESHOLD && material !== 'UNKNOWN';
+    });
+    
+    filteredDetections.forEach(detection => {
         const [x, y, width, height] = detection.bbox;
         const material = classifyMaterial(detection.class);
         const color = materialColors[material];
@@ -125,18 +141,40 @@ function drawDetections(detections) {
         ctx.font = 'bold 16px Arial';
         ctx.fillText(labelText, x + 3, y - 7);
     });
+
+    // Update status with number of detections
+    if (filteredDetections.length > 0) {
+        status.textContent = `Rilevati ${filteredDetections.length} oggetti riciclabili`;
+    } else {
+        status.textContent = 'Nessun oggetto riciclabile rilevato';
+    }
 }
 
 // Load the COCO-SSD model
-async function loadModel() {
+async function loadCocoModel() {
     try {
-        status.textContent = 'Caricamento modello...';
-        model = await cocoSsd.load();
-        status.textContent = 'Modello caricato con successo';
-        startButton.disabled = false;
+        status.textContent = 'Caricamento modello COCO-SSD...';
+        cocoModel = await cocoSsd.load();
+        status.textContent = 'Modello COCO-SSD caricato con successo';
+        return true;
     } catch (error) {
-        status.textContent = 'Errore caricamento modello: ' + error.message;
-        console.error('Error loading model:', error);
+        status.textContent = 'Errore caricamento modello COCO-SSD: ' + error.message;
+        console.error('Error loading COCO-SSD model:', error);
+        return false;
+    }
+}
+
+// Load the Roboflow model
+async function loadRoboflowModel() {
+    try {
+        status.textContent = 'Caricamento modello Roboflow...';
+        roboflowModel = new RoboflowModel();
+        status.textContent = 'Modello Roboflow caricato con successo';
+        return true;
+    } catch (error) {
+        status.textContent = 'Errore caricamento modello Roboflow: ' + error.message;
+        console.error('Error loading Roboflow model:', error);
+        return false;
     }
 }
 
@@ -148,21 +186,73 @@ async function detectObjects() {
     canvas.height = video.videoHeight;
 
     try {
-        const detections = await model.detect(video);
-        drawDetections(detections);
-        requestAnimationFrame(detectObjects);
+        let detections;
+        if (currentModel === cocoModel) {
+            detections = await cocoModel.detect(video);
+            drawDetections(detections);
+            requestAnimationFrame(detectObjects);
+        } else {
+            // For Roboflow, we don't do continuous detection
+            status.textContent = 'Per il modello Roboflow, usa il pulsante "Scatta Foto" per catturare un\'immagine';
+            stopDetection();
+        }
     } catch (error) {
         console.error('Detection error:', error);
-        status.textContent = 'Errore durante il rilevamento';
+        status.textContent = `Errore durante il rilevamento: ${error.message}`;
         stopDetection();
+    }
+}
+
+// Capture and process photo for Roboflow
+async function captureAndDetect() {
+    try {
+        // Show camera overlay
+        cameraOverlay.classList.add('active');
+        status.textContent = 'Prepara a scattare una bella foto!';
+        
+        // Wait for 2 seconds to let the user prepare
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Hide overlay and process
+        cameraOverlay.classList.remove('active');
+        status.textContent = 'Elaborazione immagine...';
+        
+        // Draw current video frame to canvas
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Get the image data
+        const imageData = canvas.toDataURL('image/jpeg', 0.8);
+        
+        // Perform detection
+        const detections = await roboflowModel.detect(imageData);
+        drawDetections(detections);
+        
+        status.textContent = 'Rilevamento completato. Clicca "Scatta Foto" per una nuova analisi.';
+    } catch (error) {
+        console.error('Photo detection error:', error);
+        status.textContent = `Errore durante l'elaborazione: ${error.message}`;
+        cameraOverlay.classList.remove('active');
     }
 }
 
 // Start detection
 function startDetection() {
+    if (!currentModel) {
+        status.textContent = 'Seleziona un modello prima di iniziare';
+        return;
+    }
+    
+    if (currentModel === roboflowModel) {
+        status.textContent = 'Il modello Roboflow richiede l\'acquisizione di una foto. Usa il pulsante "Scatta Foto".';
+        return;
+    }
+    
     isDetecting = true;
     startButton.disabled = true;
     stopButton.disabled = false;
+    captureButton.style.display = 'none';
     status.textContent = 'Rilevamento in corso...';
     detectObjects();
 }
@@ -172,19 +262,58 @@ function stopDetection() {
     isDetecting = false;
     startButton.disabled = false;
     stopButton.disabled = true;
+    if (currentModel === roboflowModel) {
+        captureButton.style.display = 'inline-flex';
+    }
     status.textContent = 'Rilevamento fermato';
+}
+
+// Switch model
+async function switchModel(modelType) {
+    stopDetection();
+    cameraOverlay.classList.remove('active');
+    
+    if (modelType === 'coco') {
+        cocoModelButton.classList.add('active');
+        roboflowModelButton.classList.remove('active');
+        currentModel = cocoModel;
+        captureButton.style.display = 'none';
+        status.textContent = 'Modello COCO-SSD selezionato. Usa "Start Detection" per il rilevamento in tempo reale.';
+    } else {
+        cocoModelButton.classList.remove('active');
+        roboflowModelButton.classList.add('active');
+        currentModel = roboflowModel;
+        captureButton.style.display = 'inline-flex';
+        status.textContent = 'Modello Roboflow selezionato. Usa "Scatta Foto" per catturare e analizzare un\'immagine.';
+    }
 }
 
 // Event listeners
 startButton.addEventListener('click', startDetection);
 stopButton.addEventListener('click', stopDetection);
+captureButton.addEventListener('click', captureAndDetect);
+cocoModelButton.addEventListener('click', () => switchModel('coco'));
+roboflowModelButton.addEventListener('click', () => switchModel('roboflow'));
 
 // Initialize the application
 async function init() {
     try {
         status.textContent = 'Inizializzazione...';
         await initWebcam();
-        await loadModel();
+        
+        // Load both models
+        const cocoLoaded = await loadCocoModel();
+        const roboflowLoaded = await loadRoboflowModel();
+        
+        if (cocoLoaded && roboflowLoaded) {
+            // Default to COCO-SSD model
+            currentModel = cocoModel;
+            status.textContent = 'Pronto per il rilevamento';
+            startButton.disabled = false;
+        } else {
+            status.textContent = 'Errore durante il caricamento dei modelli';
+            status.style.color = '#ff0000';
+        }
     } catch (error) {
         status.textContent = 'Errore durante l\'inizializzazione: ' + error.message;
         status.style.color = '#ff0000';

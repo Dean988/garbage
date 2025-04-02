@@ -3,25 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Waste Classification</title>
+    <title>Garbage Classification HumanAIze</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
+    <div class="background-image"></div>
     <div class="blob-container">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
     </div>
     
     <div class="container">
-        <h1>Waste Classification</h1>
+        <div class="header">
+            <img src="https://i.imgur.com/y9vLUyy.png" alt="HumanAIze Logo" class="logo">
+            <h1>Garbage Classification HumanAIze</h1>
+        </div>
+        
+        <div class="model-selector">
+            <h2>Seleziona il Modello</h2>
+            <div class="model-buttons">
+                <button id="cocoModel" class="model-button active">
+                    <span class="model-icon">🤖</span>
+                    <span class="model-name">COCO-SSD</span>
+                </button>
+                <button id="roboflowModel" class="model-button">
+                    <span class="model-icon">🌐</span>
+                    <span class="model-name">Roboflow</span>
+                </button>
+            </div>
+        </div>
+
         <div class="video-container">
             <video id="video" autoplay playsinline></video>
             <canvas id="canvas"></canvas>
+            <div class="camera-overlay" id="cameraOverlay">
+                <div class="camera-frame"></div>
+                <div class="camera-text">Prepara a scattare una bella foto!</div>
+            </div>
         </div>
+        
         <div class="controls">
             <button id="startButton">Start Detection</button>
             <button id="stopButton" disabled>Stop Detection</button>
+            <button id="captureButton" class="capture-button" style="display: none;">
+                <span class="capture-icon">📸</span>
+                Scatta Foto
+            </button>
         </div>
+        
         <div class="status" id="status">Ready to start detection</div>
         
         <div class="legend">
@@ -54,6 +84,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+    <script src="roboflow-model.js"></script>
     <script src="app.js"></script>
 </body>
 </html> 

@@ -2,6 +2,8 @@
 
 ![HumanAIze Logo](https://i.imgur.com/y9vLUyy.png)
 
+Site to test: elaborate-otter-e94a57.netlify.app
+
 A modern web application for real-time waste classification using artificial intelligence. The project uses two machine learning models to detect and classify objects into different waste categories.
 
 ## ✨ Features

@@ -2,106 +2,106 @@
 
 ![HumanAIze Logo](https://i.imgur.com/y9vLUyy.png)
 
-Un'applicazione web moderna per la classificazione in tempo reale dei rifiuti utilizzando l'intelligenza artificiale. Il progetto utilizza due modelli di machine learning per rilevare e classificare gli oggetti in diverse categorie di rifiuti.
+A modern web application for real-time waste classification using artificial intelligence. The project uses two machine learning models to detect and classify objects into different waste categories.
 
-## ✨ Caratteristiche
+## ✨ Features
 
-- 🎥 Rilevamento in tempo reale tramite webcam
-- 🤖 Due modelli di AI disponibili:
-  - COCO-SSD per il rilevamento in tempo reale
-  - Roboflow per l'analisi di immagini statiche
-- 🎯 Classificazione accurata in 6 categorie:
-  - 🌱 BIODEGRADABILE
-  - 📄 CARTA
-  - 🥤 PLASTICA
-  - 🔧 METALLO
-  - 📦 CARTONE
-  - 🍷 VETRO
-- 💫 Interfaccia utente moderna con effetti glassmorphism
-- 📸 Modalità fotocamera con animazioni
-- 🎨 Design responsive e accattivante
+- 🎥 Real-time detection through webcam
+- 🤖 Two AI models available:
+  - COCO-SSD for real-time detection
+  - Roboflow for static image analysis
+- 🎯 Accurate classification into 6 categories:
+  - 🌱 BIODEGRADABLE
+  - 📄 PAPER
+  - 🥤 PLASTIC
+  - 🔧 METAL
+  - 📦 CARDBOARD
+  - 🍷 GLASS
+- 💫 Modern UI with glassmorphism effects
+- 📸 Camera mode with animations
+- 🎨 Responsive and engaging design
 
 ## 🚀 Demo
 
-L'applicazione è in grado di:
-- Rilevare oggetti in tempo reale
-- Classificare i materiali automaticamente
-- Fornire feedback visivo con bordi colorati
-- Mostrare le percentuali di confidenza
-- Catturare e analizzare immagini statiche
+The application can:
+- Detect objects in real-time
+- Automatically classify materials
+- Provide visual feedback with colored borders
+- Show confidence percentages
+- Capture and analyze static images
 
-## 🛠️ Tecnologie Utilizzate
+## 🛠️ Technologies Used
 
 - HTML5
-- CSS3 (Animazioni, Flexbox, Grid)
+- CSS3 (Animations, Flexbox, Grid)
 - JavaScript (ES6+)
 - TensorFlow.js (COCO-SSD)
 - Roboflow API
-- Axios per le chiamate API
+- Axios for API calls
 
-## 📦 Installazione
+## 📦 Installation
 
-1. Clona il repository:
+1. Clone the repository:
 ```bash
-git clone https://github.com/tuousername/garbage-classification-humanaize.git
+git clone https://github.com/Dean988/garbage-classification-humanaize.git
 ```
 
-2. Naviga nella directory del progetto:
+2. Navigate to the project directory:
 ```bash
 cd garbage-classification-humanaize
 ```
 
-3. Apri `index.html` nel tuo browser
+3. Open `index.html` in your browser
 
-⚠️ **Nota**: I modelli AI non sono inclusi nel repository a causa delle dimensioni. Per ottenere accesso ai modelli, contattami in privato.
+⚠️ **Note**: AI models are not included in the repository due to size constraints. To get access to the models, please contact me privately.
 
-## 💻 Utilizzo
+## 💻 Usage
 
-1. Concedi l'accesso alla webcam quando richiesto
-2. Seleziona il modello desiderato:
-   - COCO-SSD: per rilevamento in tempo reale
-   - Roboflow: per analisi di singole immagini
-3. Per COCO-SSD:
-   - Clicca "Start Detection" per iniziare
-   - Mostra oggetti alla webcam
-   - Il sistema classificherà automaticamente
-4. Per Roboflow:
-   - Clicca "Scatta Foto"
-   - Attendi il countdown
-   - L'analisi verrà eseguita automaticamente
+1. Grant webcam access when prompted
+2. Select your desired model:
+   - COCO-SSD: for real-time detection
+   - Roboflow: for single image analysis
+3. For COCO-SSD:
+   - Click "Start Detection" to begin
+   - Show objects to the webcam
+   - The system will classify automatically
+4. For Roboflow:
+   - Click "Take Photo"
+   - Wait for the countdown
+   - Analysis will be performed automatically
 
-## 🎨 Personalizzazione
+## 🎨 Customization
 
-Il sistema è altamente personalizzabile:
-- Modifica le soglie di confidenza in `app.js`
-- Aggiungi nuove categorie nel mapping dei materiali
-- Personalizza i colori nel sistema di classificazione
-- Modifica le animazioni in `styles.css`
+The system is highly customizable:
+- Modify confidence thresholds in `app.js`
+- Add new categories in the materials mapping
+- Customize colors in the classification system
+- Modify animations in `styles.css`
 
-## 🤝 Contribuire
+## 🤝 Contributing
 
-I contributi sono benvenuti! Per contribuire:
-1. Fai un fork del repository
-2. Crea un branch per la tua feature
-3. Committa le tue modifiche
-4. Pusha al branch
-5. Apri una Pull Request
+Contributions are welcome! To contribute:
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a Pull Request
 
-## 📄 Licenza
+## 📄 License
 
-Questo progetto è sotto licenza MIT. Vedi il file `LICENSE` per i dettagli.
+This project is under the MIT License. See the `LICENSE` file for details.
 
-## 📧 Contatti
+## 📧 Contact
 
-Per ottenere accesso ai modelli AI o per qualsiasi domanda:
-- Email: [tuo-email@example.com]
-- GitHub: [@tuousername]
+To get access to the AI models or for any questions:
+- Email: [your-email@example.com]
+- GitHub: [@yourusername]
 
-## 🙏 Ringraziamenti
+## 🙏 Acknowledgments
 
-- TensorFlow.js team per COCO-SSD
-- Roboflow per l'API di object detection
-- La community open source per il supporto
+- TensorFlow.js team for COCO-SSD
+- Roboflow for the object detection API
+- The open source community for support
 
 ---
-Fatto con ❤️ da [Il tuo nome] 
+Made with ❤️ by Dean 
